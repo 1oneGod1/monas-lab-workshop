@@ -22,18 +22,19 @@ const shortcuts = [
   { key: "G", label: "Grab / Move", note: "Geser objek pada sumbu" },
   { key: "R", label: "Rotate", note: "Putar objek" },
   { key: "S", label: "Scale", note: "Ubah ukuran" },
+  { key: "E", label: "Extrude", note: "Tarik face menjadi volume baru" },
   { key: "⇧ A", label: "Add", note: "Tambah primitive baru" },
   { key: "Tab", label: "Edit / Object", note: "Ganti mode kerja" },
   { key: "↶", label: "Undo", note: "Ctrl + Z untuk kembali" },
 ];
 
 const modelSteps = [
-  { title: "Buat pondasi", minute: "15–19", text: "Tambahkan Cube, lalu tekan S untuk membuat alas lebar dan tipis.", tip: "S → Z → 0.3" },
-  { title: "Susun podium", minute: "19–23", text: "Duplikasi bentuk dasar. Perkecil dan naikkan untuk membentuk tiga level.", tip: "Shift + D" },
-  { title: "Bangun menara", minute: "23–29", text: "Tambahkan Cube tinggi. Buat bagian atas sedikit lebih ramping.", tip: "G → Z" },
-  { title: "Tambah cawan", minute: "29–33", text: "Gunakan Cylinder pendek sebagai transisi menuju lidah api.", tip: "Shift + A" },
-  { title: "Bentuk lidah api", minute: "33–38", text: "Mulai dari UV Sphere, tarik ke atas, lalu putar sedikit agar terasa dinamis.", tip: "S → Z" },
-  { title: "Periksa model", minute: "38–40", text: "Lihat dari bawah dan samping. Pastikan semua bagian menyatu tanpa celah.", tip: "Orbit 360°" },
+  { title: "Siapkan satu Cube", minute: "15–18", text: "Tambahkan Cube, skalakan menjadi alas lebar dan tipis, lalu masuk Edit Mode. Seluruh Monas akan tumbuh dari mesh ini.", tip: "S → Z → 0.3 • Tab" },
+  { title: "Extrude podium", minute: "18–22", text: "Pilih face paling atas. Tekan E lalu Z untuk menariknya ke atas. Tekan S untuk mengecilkan, lalu ulangi untuk level berikutnya.", tip: "E → Z • S → 0.78" },
+  { title: "Extrude menara", minute: "22–29", text: "Dari face atas podium, extrude sedikit lalu perkecil. Extrude jauh ke atas untuk membentuk badan menara yang ramping.", tip: "E → Z • S → 0.35" },
+  { title: "Extrude cawan", minute: "29–33", text: "Di puncak menara, extrude pendek. Skalakan keluar untuk membuat cawan, extrude lagi, lalu skalakan kembali ke dalam.", tip: "E → Z • S → 1.8" },
+  { title: "Extrude lidah api", minute: "33–38", text: "Extrude beberapa segmen pendek ke atas. Setiap segmen diperkecil dan sedikit digeser agar puncaknya menyerupai lidah api sederhana.", tip: "E → Z • S • G" },
+  { title: "Periksa satu mesh", minute: "38–40", text: "Orbit 360°. Pastikan tidak ada face ganda, celah, atau bentuk terlalu tipis. Karena dibuat dengan extrude, seluruh Monas tetap menyatu.", tip: "Tab • Orbit 360°" },
 ];
 
 const printChecks = [
@@ -246,7 +247,7 @@ export default function Home() {
             <p className="section-kicker">02 / CONTROL IT • 10–15 MENIT</p>
             <h2>Blender<br /><span>survival kit.</span></h2>
           </div>
-          <p className="section-intro">Kita tidak perlu menguasai semuanya. Enam perintah ini cukup untuk membangun Monas pertama kita.</p>
+          <p className="section-intro">Kita tidak perlu menguasai semuanya. Tujuh perintah ini cukup—dan <strong>E untuk Extrude</strong> menjadi alat utama untuk menumbuhkan Monas dari satu Cube.</p>
         </div>
 
         <div className="shortcut-lab">
@@ -255,6 +256,7 @@ export default function Home() {
             <div className="viewport-grid" />
             <div className="viewport-object"><MonasObject compact /></div>
             {activeTool === "⇧ A" && <div className="add-menu"><b>Add</b><span>Mesh</span><span>Cube</span><span>Cylinder</span></div>}
+            {activeTool === "E" && <div className="extrude-overlay"><span>SELECT TOP FACE</span><i /><b>E + Z</b></div>}
             <div className="tool-readout"><span>ACTIVE TOOL</span><strong>{activeTool === "↶" ? "CTRL + Z" : activeTool}</strong></div>
           </div>
 
@@ -271,8 +273,8 @@ export default function Home() {
 
         <div className="quick-challenge">
           <span className="challenge-number">02:00</span>
-          <div><p className="micro-label">MINI CHALLENGE</p><h3>Geser. Putar. Besarkan.</h3><p>Pilih Cube. Tekan G, R, dan S. Kalau tersesat, Ctrl + Z adalah temanmu.</p></div>
-          <button onClick={() => setActiveTool("G")}>Mulai dari G <span>→</span></button>
+          <div><p className="micro-label">MINI CHALLENGE</p><h3>Extrude. Tinggikan. Skalakan.</h3><p>Pilih face atas Cube. Tekan E, kunci dengan Z, tarik ke atas, lalu tekan S untuk mengecilkan.</p></div>
+          <button onClick={() => setActiveTool("E")}>Coba Extrude <span>→</span></button>
         </div>
       </section>
 
@@ -280,22 +282,23 @@ export default function Home() {
         <div className="section-head">
           <div>
             <p className="section-kicker">03 / BUILD IT • 15–40 MENIT</p>
-            <h2>Bangun Monas,<br /><span>satu bentuk sekali.</span></h2>
+            <h2>Tarik Monas<br /><span>dari satu Cube.</span></h2>
           </div>
-          <p className="section-intro">Ikuti enam langkah. Jangan mengejar detail—kejar siluet yang terbaca dan bentuk yang bisa dicetak.</p>
+          <p className="section-intro">Pilih face paling atas, lalu ulangi ritme <strong>Extrude → Z → Scale</strong>. Hasilnya satu mesh yang rapi, menyatu, dan lebih mudah dicetak.</p>
         </div>
 
         <div className="model-builder">
           <div className="build-window">
-            <div className="build-label"><span>ASSEMBLY VIEW</span><b>STEP {String(modelStep + 1).padStart(2, "0")}</b></div>
-            <div className={`build-object step-${modelStep}`}>
-              <div className={`build-part flame ${modelStep >= 4 ? "built" : ""}`} />
-              <div className={`build-part crown ${modelStep >= 3 ? "built" : ""}`} />
-              <div className={`build-part tower ${modelStep >= 2 ? "built" : ""}`} />
-              <div className={`build-part deck ${modelStep >= 1 ? "built" : ""}`} />
-              <div className="build-part base-two built" />
-              <div className="build-part base-one built" />
+            <div className="build-label"><span>EXTRUSION VIEW • SINGLE MESH</span><b>STEP {String(modelStep + 1).padStart(2, "0")}</b></div>
+            <div className={`build-object extrude-mode step-${modelStep}`}>
+              <div className={`build-part flame ${modelStep >= 4 ? "built" : ""} ${modelStep === 4 ? "current-face" : ""}`} />
+              <div className={`build-part crown ${modelStep >= 3 ? "built" : ""} ${modelStep === 3 ? "current-face" : ""}`} />
+              <div className={`build-part tower ${modelStep >= 2 ? "built" : ""} ${modelStep === 2 ? "current-face" : ""}`} />
+              <div className={`build-part deck ${modelStep >= 1 ? "built" : ""} ${modelStep === 1 ? "current-face" : ""}`} />
+              <div className={`build-part base-two built ${modelStep === 1 ? "current-face" : ""}`} />
+              <div className={`build-part base-one built ${modelStep === 0 ? "current-face" : ""}`} />
             </div>
+            <div className="extrude-trace"><span>SELECTED FACE</span><i /><b>E + Z</b></div>
             <div className="build-ground" />
             <div className="orbit-hint">↻ DRAG TO ORBIT</div>
           </div>
@@ -313,7 +316,17 @@ export default function Home() {
           </div>
         </div>
 
-        <aside className="facilitator-note"><span>CATATAN FASILITATOR</span><p>Jika waktu menipis, berikan file Monas setengah jadi. Peserta tetap dapat menyelesaikan lidah api dan mengalami workflow sampai slicing.</p></aside>
+        <div className="extrude-recipe" aria-label="Urutan dasar extrude">
+          <div><span>01</span><kbd>3</kbd><strong>Face Select</strong><small>Pilih face paling atas</small></div>
+          <b aria-hidden="true">→</b>
+          <div><span>02</span><kbd>E</kbd><strong>Extrude</strong><small>Buat geometri baru</small></div>
+          <b aria-hidden="true">→</b>
+          <div><span>03</span><kbd>Z</kbd><strong>Lock Axis</strong><small>Tarik lurus ke atas</small></div>
+          <b aria-hidden="true">→</b>
+          <div><span>04</span><kbd>S</kbd><strong>Scale</strong><small>Atur lebar segmen</small></div>
+        </div>
+
+        <aside className="facilitator-note"><span>CATATAN FASILITATOR</span><p>Tunjukkan satu siklus lengkap: pilih face atas → E → Z → klik → S. Setelah peserta memahami ritmenya, podium dan menara hanya pengulangan dengan tinggi serta skala berbeda.</p></aside>
       </section>
 
       <section className="lesson prepare" id="print">
@@ -348,7 +361,7 @@ export default function Home() {
         <div className="export-strip">
           <div><p className="micro-label">EXPORT STL</p><h3>Tiga klik menuju Bambu Studio.</h3></div>
           <ol>
-            <li><span>01</span><div><strong>Select model</strong><small>Pilih semua bagian Monas</small></div></li>
+            <li><span>01</span><div><strong>Select model</strong><small>Pilih satu mesh Monas hasil extrude</small></div></li>
             <li><span>02</span><div><strong>File → Export → STL</strong><small>Aktifkan “Selection Only”</small></div></li>
             <li><span>03</span><div><strong>Save</strong><small>Nama: monas_nama.stl</small></div></li>
           </ol>
@@ -425,7 +438,7 @@ export default function Home() {
         <div className="workflow">
           {[
             ["01", "Observe", "Pecah objek menjadi bentuk sederhana"],
-            ["02", "Model", "Susun, geser, putar, dan skalakan"],
+            ["02", "Model", "Extrude, tarik, lalu skalakan satu mesh"],
             ["03", "Prepare", "Periksa lalu slice untuk printer"],
             ["04", "Create", "Cetak dan evaluasi hasilnya"],
           ].map(([number, title, copy], index) => (
